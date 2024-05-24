@@ -50,6 +50,9 @@ if options:
     ingredients_string = ''
     for fruit in options:
         ingredients_string += fruit + " "
+        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_chosen)
+        fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
+
 
     insert_stmt = """
     insert into smoothies.public.orders(ingredients, name_on_order)
@@ -62,11 +65,6 @@ if options:
         session.sql(insert_stmt).collect()
         st.success('Your smoothie is ordered, %s!' % name, icon="✅")
 
-
-
-
-fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
-fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
 
 
 
