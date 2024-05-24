@@ -33,7 +33,9 @@ session = cnx.session()
 # st.write("You selected: ", "None" if option == "-- Please select a fruit --" else option)
 
 my_df = session.table("smoothies.public.fruit_options").select(col("FRUIT_NAME"), col("SEARCH_ON"))
-st.dataframe(data=my_df, use_container_width=True)
+
+pd_df = my_df.to_pandas()
+st.datafram(pf_df)
 st.stop()
 
 
