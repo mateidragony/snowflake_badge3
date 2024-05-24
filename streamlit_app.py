@@ -21,7 +21,7 @@ st.write(
 
 
 # session = get_active_session()
-cnx = st.connection("Snowflake")
+cnx = st.connection("snowflake")
 session = cnx.session()
 
 my_df = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()
