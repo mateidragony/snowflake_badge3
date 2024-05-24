@@ -3,7 +3,7 @@ import streamlit as st
 from snowflake.snowpark.functions import col, when_matched
 
 
-from snowflake.snowpark.context import get_active_session
+# from snowflake.snowpark.context import get_active_session
 
 # Write directly to the app
 st.title(":cup_with_straw: Pending Smoothie Orders :cup_with_straw:")
@@ -20,7 +20,10 @@ st.write(
 # st.write("You selected: ", "None" if option == "-- Please select a fruit --" else option)
 
 
-session = get_active_session()
+# session = get_active_session()
+cnx = st.connection("Snowflake")
+session = cnx.session()
+
 my_df = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()
 
 if not my_df:
