@@ -1,7 +1,7 @@
 # Import python packages
 import streamlit as st
 from snowflake.snowpark.functions import col, when_matched
-
+import requests
 
 # from snowflake.snowpark.context import get_active_session
 
@@ -65,7 +65,8 @@ if options:
 
 
 
-
+fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
 
 
 
