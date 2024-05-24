@@ -2,6 +2,7 @@
 import streamlit as st
 from snowflake.snowpark.functions import col, when_matched
 import requests
+import pandas
 
 # from snowflake.snowpark.context import get_active_session
 
@@ -31,8 +32,9 @@ session = cnx.session()
 
 # st.write("You selected: ", "None" if option == "-- Please select a fruit --" else option)
 
-my_df = session.table("smoothies.public.fruit_options").select(col("FRUIT_NAME"))
-# st.dataframe(data=my_df, use_container_width=True)
+my_df = session.table("smoothies.public.fruit_options").select(col("FRUIT_NAME"), col("SEARCH_ON"))
+st.dataframe(data=my_df, use_container_width=True)
+st.stop()
 
 
 name = st.text_input("Name on Smoothie", "")
