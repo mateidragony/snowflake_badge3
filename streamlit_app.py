@@ -5,12 +5,24 @@ from snowflake.snowpark.functions import col, when_matched
 
 # from snowflake.snowpark.context import get_active_session
 
+# option = st.selectbox(
+#    "What is your favorite fruit?",
+#    ("-- Please select a fruit --", "Banana", "Strawberries", "Peaches"),
+# )
+
+# st.write("You selected: ", "None" if option == "-- Please select a fruit --" else option)
+
 # Write directly to the app
-st.title(":cup_with_straw: Pending Smoothie Orders :cup_with_straw:")
+st.title(":cup_with_straw: Customize Your Smoothie! :cup_with_straw:")
 st.write(
-    """Orders that need to be filled.
+    """Choose the fruits you want in your custom Smoothie!
     """
 )
+
+# session = get_active_session()
+cnx = st.connection("snowflake")
+session = cnx.session()
+
 
 # option = st.selectbox(
 #    "What is your favorite fruit?",
@@ -19,31 +31,54 @@ st.write(
 
 # st.write("You selected: ", "None" if option == "-- Please select a fruit --" else option)
 
+my_df = session.table("smoothies.public.fruit_options").select(col("FRUIT_NAME"))
+# st.dataframe(data=my_df, use_container_width=True)
 
-# session = get_active_session()
-cnx = st.connection("snowflake")
-session = cnx.session()
 
-my_df = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()
+name = st.text_input("Name on Smoothie", "")
 
-if not my_df:
-    st.write("Looks like there's nothing here...")
-else:
-    e_df = st.data_editor(my_df)
+
+
+options = st.multiselect(
+    "Choose up to 5 ingredients",
+    my_df,
+    max_selections=5)
+
+# st.write("First selected:", options[0] if options else None)
+
+if options:
+    ingredients_string = ''
+    for fruit in options:
+        ingredients_string += fruit + " "
+
+    insert_stmt = """
+    insert into smoothies.public.orders(ingredients, name_on_order)
+    values ('%s', '%s')
+    """ % (ingredients_string, name)
+
+    submit_button = st.button("Submit Order")
     
-    submitted = st.button("Submit")
-    
-    if submitted:
-        with st.spinner('Updating Dataset..'):
-            original = session.table("smoothies.public.orders")
-            edited = session.create_dataframe(e_df)
-            try:
-                original.merge(edited, 
-                           (original['order_uid'] == edited['order_uid']),
-                          [when_matched().update({'ORDER_FILLED' : edited['ORDER_FILLED']})])
-                st.success("Dataset Updated.")
-            except:
-                st.error("Something went wrong.")
+    if submit_button:
+        session.sql(insert_stmt).collect()
+        st.success('Your smoothie is ordered, %s!' % name, icon="✅")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
