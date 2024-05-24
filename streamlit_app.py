@@ -27,7 +27,7 @@ session = cnx.session()
 my_df = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()
 
 if not my_df:
-    st.write("Looks like there's nothing here...SMOOTHIES.PUBLIC."LQ51H1ZBF6_9EJLE (Stage)"")
+    st.write("Looks like there's nothing here...")
 else:
     e_df = st.data_editor(my_df)
     
