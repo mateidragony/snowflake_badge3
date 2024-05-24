@@ -35,7 +35,7 @@ session = cnx.session()
 my_df = session.table("smoothies.public.fruit_options").select(col("FRUIT_NAME"), col("SEARCH_ON"))
 
 pd_df = my_df.to_pandas()
-st.dataframe(pf_df)
+st.dataframe(pd_df)
 st.stop()
 
 
